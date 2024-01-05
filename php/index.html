@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">  
+</head>
+<body class="bg-light">
+    <div id="loadingOverlay">
+        <div class="spinner-border text-light" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="back-and-path col-md-12 py-2">
+                <button id="backButton" class="btn btn-secondary mb-3">Back</button>
+                <span id="currentDirectory" class="ml-2"></span>
+            </div>
+            <!-- Sorting Controls with Bootstrap Styling -->
+            <div id="sortingControlsContainer" class="mb-3">
+                <div class="sorting-controls d-flex align-items-center justify-content-center">
+                    <label class="mr-2">Sort by:</label>
+                    <select id="sortField" class="custom-select mr-2">
+                        <option value="name">Name</option>
+                        <option value="date" selected>Date</option>
+                    </select>
+            
+                    <button id="sortAsc" class="btn btn-outline-secondary mr-1" title="Ascending">
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                    <button id="sortDesc" class="btn btn-outline-secondary" title="Descending">
+                        <i class="bi bi-arrow-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>    
+        
+        <div id="imageGallery" class="row">
+            <!-- Images will be loaded here -->
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" id="firstPage"><a class="page-link" href="#">First</a></li>
+                <li class="page-item" id="previousPage"><a class="page-link" href="#">Previous</a></li>
+                <!-- Dynamic pagination numbers will be inserted here -->
+                <li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>
+                <li class="page-item" id="lastPage"><a class="page-link" href="#">Last</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Bootstrap Modal for Image Popup -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid" alt="Preview">
+                </div>
+                <div class="modal-footer">
+                    <button id="prevImage" type="button" class="btn btn-secondary">Previous</button>
+                    <button id="nextImage" type="button" class="btn btn-secondary">Next</button>
+                    <a id="fullSizeLink" href="" target="_blank" class="btn btn-primary">Open Full Size</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- JavaScript and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script> <!-- Your custom script -->
+</body>
+</html>
+
