@@ -1,6 +1,6 @@
 /* Style for making images in the modal responsive */
 #modalImage {
-    max-width: 100%;    /* Maximum width of the image is 100% of the container */
+    /* max-width: 100%;    Maximum width of the image is 100% of the container */
     max-height: 70vh;   /* Maximum height is 80% of the viewport height */
     object-fit: contain; /* Ensures the image is scaled to maintain its aspect ratio */
 }
@@ -25,4 +25,19 @@
 .active-sort {
     color: white;
     background-color: #007bff; /* Bootstrap primary color */
+}
+
+/* Dark theme styles */
+body.dark-theme {
+    background-color: #343a40;
+    color: white;
+}
+
+body.dark-theme .navbar {
+    background-color: #212529;
+}
+
+body.dark-theme .btn-outline-secondary {
+    color: white;
+    border-color: white;
 }

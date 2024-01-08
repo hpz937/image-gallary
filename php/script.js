@@ -5,6 +5,27 @@ $(document).ready(function() {
     let imageUrls = [];
     let currentPath = ''; // Keep track of the current path
 
+    function applySystemTheme() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // System prefers dark theme
+            $('body').addClass('dark-theme');
+            $('#themeToggle').text('Light Theme');
+        } else {
+            // System prefers light theme or doesn't specify
+            $('body').removeClass('dark-theme');
+            $('#themeToggle').text('Dark Theme');
+        }
+    }
+
+    applySystemTheme(); // Apply the system theme on initial load
+
+    $('#themeToggle').click(function() {
+        $('body').toggleClass('dark-theme');
+
+        var btnText = $('body').hasClass('dark-theme') ? 'Light Theme' : 'Dark Theme';
+        $(this).text(btnText);
+    });
+
     $('#backButton').hide(); // Initially hide the button
 
     $('#sortButton').click(function() {
@@ -23,7 +44,7 @@ $(document).ready(function() {
         updateSortButtonHighlight(this);
     });
 
-    function loadImages(page, subdir = '') {
+    function loadImages(page, callback) {
         let sortField = $('#sortField').val();
         let sortOrder = $('#sortOrder').val();
 
@@ -73,7 +94,9 @@ $(document).ready(function() {
                 $('#currentDirectory').text('');
             }
             $('#loadingOverlay').hide(); // Hide the loading icon after images are loaded
-            // Update current directory display
+            if (callback) {
+                callback(); // Call the callback function after images are loaded
+            }
         });
     }
 
@@ -103,8 +126,21 @@ $(document).ready(function() {
 
             $('#modalImage').attr('src', fullImageUrl);
             $('#fullSizeLink').attr('href', fullImageUrl);
-            $('#prevImage').prop('disabled', index === 0);
-            $('#nextImage').prop('disabled', index === imageUrls.length - 1);
+            // $('#prevImage').prop('disabled', index === 0);
+            // $('#nextImage').prop('disabled', index === imageUrls.length - 1);
+        } else {
+            // Check if we need to load a new page
+            if (index < 0 && currentPage > 1) {
+                // Load the previous page and set index to last image of that page
+                loadImages(currentPage - 1, function() {
+                    updateModalImage(imageUrls.length - 1);
+                });
+            } else if (index >= imageUrls.length && currentPage < totalPages) {
+                // Load the next page and set index to first image of that page
+                loadImages(currentPage + 1, function() {
+                    updateModalImage(0);
+                });
+            }
         }
     }
 
@@ -120,7 +156,7 @@ $(document).ready(function() {
         e.preventDefault();
         let subdir = $(this).attr('data-subdir');
         currentPath = currentPath + '/' + subdir
-        loadImages(1, currentPath);
+        loadImages(1);
         if(subdir != '') {
             $('#backButton').show(); // Show the back button
         }
@@ -144,14 +180,14 @@ $(document).ready(function() {
     // Pagination control clicks
     $('.pagination').on('click', '.page-link', function(e) {
         e.preventDefault();
-        let newPage = $(this).text();
+        let newPage = this.parentElement.getAttribute('id');
 
         switch (newPage) {
-            case 'First': newPage = 1; break;
-            case 'Previous': newPage = Math.max(1, currentPage - 1); break;
-            case 'Next': newPage = Math.min(totalPages, currentPage + 1); break;
-            case 'Last': newPage = totalPages; break;
-            default: newPage = parseInt(newPage);
+            case 'firstPage': newPage = 1; break;
+            case 'previousPage': newPage = Math.max(1, currentPage - 1); break;
+            case 'nextPage': newPage = Math.min(totalPages, currentPage + 1); break;
+            case 'lastPage': newPage = totalPages; break;
+            default: newPage = parseInt($(this).text());
         }
 
         if (newPage !== currentPage) {
@@ -163,13 +199,19 @@ $(document).ready(function() {
     function saveCurrentPath() {
         if (typeof(Storage) !== 'undefined') {
             localStorage.setItem('currentPath', currentPath);
+            localStorage.setItem('currentPage', currentPage);
         }
     }
 
     // Function to load the current path from localStorage
     function loadCurrentPath() {
         if (typeof(Storage) !== 'undefined') {
-            return localStorage.getItem('currentPath') || '';
+            currentPath = localStorage.getItem('currentPath') || '';
+            currentPage =  parseInt(localStorage.getItem('currentPage')) || 1;
+            // totalPages = 999;
+            if (currentPath !== '') {
+                $('#backButton').show();
+            }
         }
         return '';
     }
@@ -187,7 +229,8 @@ $(document).ready(function() {
         let pathArray = currentPath.split('/');
         pathArray.pop(); // Remove the last part of the path
         currentPath = pathArray.join('/');
-        loadImages(1, currentPath);
+        currentPage = 1;
+        loadImages(1);
         if (currentPath === '') {
             $(this).hide(); // Hide the button if in the base directory
         }
@@ -200,11 +243,8 @@ $(document).ready(function() {
         updateSortButtonHighlight('#sortDesc');
     }
 
-    let savedPath = loadCurrentPath();
-    if (savedPath !== '') {
-        $('#backButton').show();
-    }
-    currentPath = savedPath;
-    loadImages(currentPage, savedPath);
+    loadCurrentPath();
+
+    loadImages(currentPage);
 });
 

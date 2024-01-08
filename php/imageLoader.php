@@ -6,7 +6,7 @@ $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date'; // Default sort by name
 $order = isset($_GET['order']) ? $_GET['order'] : 'desc'; // Default order ascending
 
-$imagesPerPage = 24;
+$imagesPerPage = 36;
 
 // Define the base directory for images
 $baseDir = "images";
@@ -55,8 +55,6 @@ $imageList = array_map(function($image) {
     return [
         'thumbnail' => IMGPROXY_URL . $encodedUrl,
         'fullsize' => IMAGE_URL . dirname($image) . "/" . basename($image),
-        // 'thumbnail' => "http://192.168.1.20:16081/_/rs:fill:300:300:0:1/" . base64url_encode("http://192.168.1.20:16080/" . dirname($image) . "/" . basename($image)) . ".webp",
-        // 'fullsize' => "http://192.168.1.20:16080/" . dirname($image) . "/" . basename($image),
     ];
 }, $images);
 
